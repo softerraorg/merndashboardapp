@@ -1,0 +1,27 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "79c9cdd848e882d05abcc1d30e53e4e2"
+name = "choco_app"
+application_url = "https://example.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+
+[webhooks]
+api_version = "2025-10"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_orders,read_products,write_products"
+
+[auth]
+redirect_urls = [ "https://example.com/api/auth" ]
+
+
+
+[app_proxy]
+url = "/userdata"
+prefix = "apps"
+subpath = "proxy"
+

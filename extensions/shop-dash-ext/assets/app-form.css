@@ -1,0 +1,16 @@
+ .app-form {
+    width: 100%;
+    height: auto;
+    border: 2px solid #000;
+ }
+
+ .app-form form div {
+    display: flex; 
+    flex-direction: column; 
+ }
+
+ .app-form form input {
+    width: 90%;
+    padding: 10px;
+    margin: auto;
+ }
