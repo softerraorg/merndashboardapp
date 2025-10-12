@@ -82,10 +82,10 @@ app.post("/userdata/userinfo", async(req, res) => {
   let userData = req.body;
   try {
     let createUser = await User.create({
-      username: userData[0],
-      useremail: userData[1],
+      username: userData[0][1],
+      useremail: userData[1][1],
     });
-    console.log("--- User Created Successfully ---");
+    console.log("--- User Created Successfully ---", createUser);
     res.status(200).json({ message: "User Created Successfully" });
   } catch(error) {
     if(error.code === 11000) {
