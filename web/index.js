@@ -102,14 +102,31 @@ app.post("/userdata/userinfo", async(req, res) => {
 //   res.status(200).send("User info requested");
 // })
 
+// GETTING ALL 
+
 app.get("/api/getusers", async(req, res) => {
   try {
     let users = await User.find({});
+    console.log("users", users);
     res.status(200).send(users);
   }catch(error) {
     console.log(error)
   }
 });
+
+
+app.get("/api/users", async(req, res) => {
+try {
+let users = await User.find({});
+res.status(200).send(users);
+}
+
+catch(error) {
+  console.log(error)
+}
+
+})
+
 
 // GETTING STORE INFORMATION
 app.get("/api/store/info", async(req, res) => {
