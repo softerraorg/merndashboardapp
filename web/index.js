@@ -38,7 +38,7 @@ app.post(
 
 app.use("/api/*", shopify.validateAuthenticatedSession());
 app.use("/userdata/*", authenticateUser);
-app.use(express.json());
+app.use(express.json({ limit: '50mb' })); // Increased limit for image uploads
 
 // 1. connection to mongoose
 // 2. create schema 
@@ -135,6 +135,67 @@ app.get("/api/product/count", async(req, res) => {
   });
   res.status(200).send(totalProducts);
 });
+
+// READ ALL PRODUCTS
+app.get("/api/products/all", async(req, res) => {
+ let allProducts = await shopify.api.rest.Product.all({
+  session: res.locals.shopify.session, 
+});
+res.status(200).send(allProducts);
+});
+
+// UPDATE A PRODUCT
+app.put("/api/products/update", async(req, res) => {
+  let getProduct = req.body;
+  let updateProduct = new shopify.api.rest.Product({
+    session: res.locals.shopify.session,
+  });
+  updateProduct.id = getProduct.id;
+  updateProduct.title = getProduct.title;
+
+  await updateProduct.save({
+    update: true
+  });
+  res.status(200).send({Message: "Product Updated Successfully"});
+})
+
+// CREATE A PRODUCT
+app.post("/api/product/create", async(req, res) => {
+  try {
+    let getProduct = req.body;
+    let newProduct = new shopify.api.rest.Product({
+      session: res.locals.shopify.session,
+    });
+    
+    // Use data from the form
+    newProduct.title = getProduct.title || "New Product";
+    newProduct.body_html = getProduct.body_html || "New Product Description";
+    newProduct.handle = getProduct.handle || "new-product-" + Date.now();
+    newProduct.variants = [{
+      price: getProduct.variants?.[0]?.price || "10.00",
+    }];
+    
+    // Add image if provided
+    if(getProduct.image && getProduct.image.attachment) {
+      newProduct.images = [{
+        attachment: getProduct.image.attachment,
+        filename: getProduct.image.filename || 'product-image.jpg'
+      }];
+    }
+    
+    await newProduct.save({
+      update: false,
+    });
+    
+    res.status(200).send({ Message: "Product Created Successfully", product: newProduct });
+  } catch(error) {
+    console.error("Error creating product:", error);
+    res.status(500).send({ error: error.message });
+  }
+});
+
+// DELETE A PRODUCT
+
 
 // READ ALL COLLECTIONS
 app.get("/api/collection/count", async(req, res) => {

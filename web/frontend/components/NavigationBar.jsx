@@ -8,9 +8,8 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import PeopleIcon from '@mui/icons-material/People';
 import SettingsIcon from '@mui/icons-material/Settings';
-
 import {NavLink} from 'react-router-dom';
-
+// Testcode
 export function NavigationBar() {
     return (
         <div className="navmenu-section">
@@ -58,6 +57,11 @@ export function NavigationBar() {
                     <li title="Settings">   
                         <NavLink to="/settings" className={({isActive}) => isActive ? 'active': ''}>
                             <SettingsIcon/>
+                        </NavLink>
+                    </li>
+                    <li title="Products">
+                        <NavLink to="/products" className={({isActive}) => isActive ? 'active': ''}>
+                      
                         </NavLink>
                     </li>
 
