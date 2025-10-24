@@ -219,6 +219,52 @@ app.get("/api/products/create", async (_req, res) => {
   res.status(status).send({ success: status === 200, error });
 });
 
+
+
+
+// Get all metafielsd of the store. 
+
+app.get("/api/metafields/all", async(req, res) => {
+  try {
+   let metafields = await shopify.api.rest.Metafield.all({
+    session: res.locals.shopify.session,
+   })
+   res.status(200).send(metafields);
+  }
+  catch {
+
+  }
+})
+
+
+// GET Product Metafields
+app.get("/api/metafields/product", async(req,res) => {
+  try {
+    
+    let productMetafields = await shopify.api.rest.Metafield.all({
+      session: res.locals.shopify.session,
+      Metafield: {
+       "owner_id": "8608978567334", 
+       "owner_resource": "product"
+      }
+    })
+    console.log("productMetafields", productMetafields);
+    res.status(200).send(productMetafields);
+  }
+  catch(error) {
+    console.log(error);
+  }
+  
+
+
+})
+
+
+
+
+
+
+
 app.use(shopify.cspHeaders());
 app.use(serveStatic(STATIC_PATH, { index: false }));
 

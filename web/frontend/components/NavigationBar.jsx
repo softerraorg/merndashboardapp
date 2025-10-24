@@ -64,7 +64,11 @@ export function NavigationBar() {
                       
                         </NavLink>
                     </li>
-
+                    <li title="Metafields">
+                        <NavLink to="/metafields" className={({isActive}) => isActive ? 'active': ''}>
+                            <SettingsIcon/>
+                        </NavLink>
+                    </li>
             </ul>
         </div>
     )
