@@ -8,6 +8,7 @@ import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
 import PrivacyWebhookHandlers from "./privacy.js";
 import mongoose from "mongoose";
+import { GraphqlQueryError } from "@shopify/shopify-api";
 
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
@@ -36,9 +37,10 @@ app.post(
 // If you are adding routes outside of the /api path, remember to
 // also add a proxy rule for them in web/frontend/vite.config.js
 
-app.use("/api/*", shopify.validateAuthenticatedSession());
-app.use("/userdata/*", authenticateUser);
+
 app.use(express.json({ limit: '50mb' })); // Increased limit for image uploads
+app.use("/userdata/*", authenticateUser);
+app.use("/api/*", shopify.validateAuthenticatedSession());
 
 // 1. connection to mongoose
 // 2. create schema 
@@ -224,43 +226,79 @@ app.get("/api/products/create", async (_req, res) => {
 
 // Get all metafielsd of the store. 
 
-app.get("/api/metafields/all", async(req, res) => {
-  try {
-   let metafields = await shopify.api.rest.Metafield.all({
-    session: res.locals.shopify.session,
-   })
-   res.status(200).send(metafields);
-  }
-  catch {
+// app.get("/api/metafields/all", async(req, res) => {
+//   try {
+//    let metafields = await shopify.api.rest.Metafield.all({
+//     session: res.locals.shopify.session,
+//    })
+//    res.status(200).send(metafields);
+//   }
+//   catch {
 
-  }
-})
+//   }
+// })
 
 
 // GET Product Metafields
-app.get("/api/metafields/product", async(req,res) => {
-  try {
+// app.get("/api/metafields/product", async(req,res) => {
+//   try {
     
-    let productMetafields = await shopify.api.rest.Metafield.all({
-      session: res.locals.shopify.session,
-      Metafield: {
-       "owner_id": "8608978567334", 
-       "owner_resource": "product"
-      }
-    })
-    console.log("productMetafields", productMetafields);
-    res.status(200).send(productMetafields);
-  }
-  catch(error) {
-    console.log(error);
-  }
+//     let productMetafields = await shopify.api.rest.Metafield.all({
+//       session: res.locals.shopify.session,
+//       Metafield: {
+//        "owner_id": "8608978567334", 
+//        "owner_resource": "product"
+//       }
+//     })
+//     console.log("productMetafields", productMetafields);
+//     res.status(200).send(productMetafields);
+//   }
+//   catch(error) {
+//     console.log(error);
+//   }
   
 
 
+// })
+
+
+
+// GET Product Metafields graphql 
+// GET Product Metafields graphql
+// GET Product Metafields graphql
+// GET Product Metafields graphql
+// GET Product Metafields graphql
+app.get("/api/metafields/product/graphql", async(req,res) => {
+  const client = new shopify.api.clients.Graphql({session:res.locals.shopify.session});
+  try {
+      let productMetafields = await client.request(`
+        query MetafieldDefinitions($ownerType: MetafieldOwnerType!, $first: Int) {
+      metafieldDefinitions(ownerType: $ownerType, first: $first) {
+        nodes {
+          name
+          namespace
+          key
+          type {
+            name
+          }
+        }
+      }
+    }
+        `, {
+        variables: {
+          "ownerType": "PRODUCT",
+          "first": 10
+        },
+      });
+    res.status(200).send(productMetafields);
+  } catch (error) {
+    if (error instanceof GraphqlQueryError) {
+      throw new Error(
+        `${error.message}\n${JSON.stringify(error.response, null, 2)}`
+      );
+    }
+  }
 })
-
-
-
 
 
 

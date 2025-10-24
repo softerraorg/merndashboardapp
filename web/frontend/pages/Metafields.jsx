@@ -27,11 +27,11 @@ export default function MetafieldsPage() {
     })
 
     useEffect(() => {
-        fetch('api/metafields/product', {
+        fetch('/api/metafields/product/graphql', {
             method: 'GET',
             headers: {"Content-Type": "application/json"}
         }).then(response => response.json()).then(data => {
-            console.log("data product metafields", data);
+            console.log("data product metafields graphl", data);
             setMetafields(data.data || []);
         }).catch(error => console.error('Error:', error));
     })
@@ -59,14 +59,7 @@ export default function MetafieldsPage() {
                         </form>
                     </LegacyCard>
                 </Layout.Section>
-                <Layout.Section>
-                {metafields.map((metafield) => (
-    <Card key={metafield.id}>
-        <p>{metafield.namespace}.{metafield.key}</p>
-        <p>{metafield.value}</p>
-    </Card>
-))}
-                </Layout.Section>
+              
             </Layout>
         </Page>
     )
